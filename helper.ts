@@ -12,41 +12,41 @@ export async function getMessagePayload(message: Message) {
 
     case PUPPET.types.Message.Attachment:
     case PUPPET.types.Message.Audio: {
-      const attachFile = await message.toFileBox();
+      // const attachFile = await message.toFileBox();
 
-      const dataBuffer = await attachFile.toBuffer();
+      // const dataBuffer = await attachFile.toBuffer();
 
-      log.info(LOGPRE, `get message audio or attach: ${dataBuffer.length}`);
+      // log.info(LOGPRE, `get message audio or attach: ${dataBuffer.length}`);
 
       break;
     }
 
     case PUPPET.types.Message.Video: {
-      const videoFile = await message.toFileBox();
+      // const videoFile = await message.toFileBox();
 
-      const videoData = await videoFile.toBuffer();
+      // const videoData = await videoFile.toBuffer();
 
-      log.info(LOGPRE, `get message video: ${videoData.length}`);
+      // log.info(LOGPRE, `get message video: ${videoData.length}`);
 
       break;
     }
 
     case PUPPET.types.Message.Emoticon: {
-      const emotionFile = await message.toFileBox();
+      // const emotionFile = await message.toFileBox();
 
-      const emotionJSON = emotionFile.toJSON();
-      log.info(LOGPRE, `get message emotion json: ${JSON.stringify(emotionJSON)}`);
+      // const emotionJSON = emotionFile.toJSON();
+      // log.info(LOGPRE, `get message emotion json: ${JSON.stringify(emotionJSON)}`);
 
-      const emotionBuffer: Buffer = await emotionFile.toBuffer();
+      // const emotionBuffer: Buffer = await emotionFile.toBuffer();
 
-      log.info(LOGPRE, `get message emotion: ${emotionBuffer.length}`);
+      // log.info(LOGPRE, `get message emotion: ${emotionBuffer.length}`);
 
       break;
     }
 
     case PUPPET.types.Message.Image: {
-      const messageImage = await message.toImage();
-      log.info(LOGPRE, `get message image: ${JSON.stringify(messageImage)}`);
+      // const messageImage = await message.toImage();
+      // log.info(LOGPRE, `get message image: ${JSON.stringify(messageImage)}`);
       // const thumbImage = await messageImage.thumbnail();
       // const thumbImageData = await thumbImage.toBuffer();
 
@@ -66,21 +66,21 @@ export async function getMessagePayload(message: Message) {
     }
 
     case PUPPET.types.Message.Url: {
-      const urlLink = await message.toUrlLink();
-      log.info(LOGPRE, `get message url: ${JSON.stringify(urlLink)}`);
+      // const urlLink = await message.toUrlLink();
+      // log.info(LOGPRE, `get message url: ${JSON.stringify(urlLink)}`);
 
-      const urlThumbImage = await message.toFileBox();
-      const urlThumbImageData = await urlThumbImage.toBuffer();
+      // const urlThumbImage = await message.toFileBox();
+      // const urlThumbImageData = await urlThumbImage.toBuffer();
 
-      log.info(LOGPRE, `get message url thumb: ${urlThumbImageData.length}`);
+      // log.info(LOGPRE, `get message url thumb: ${urlThumbImageData.length}`);
 
       break;
     }
 
     case PUPPET.types.Message.MiniProgram: {
-      const miniProgram = await message.toMiniProgram();
+      // const miniProgram = await message.toMiniProgram();
 
-      log.info(LOGPRE, `MiniProgramPayload: ${JSON.stringify(miniProgram)}`);
+      // log.info(LOGPRE, `MiniProgramPayload: ${JSON.stringify(miniProgram)}`);
 
       break;
     }
