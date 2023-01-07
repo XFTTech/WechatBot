@@ -8,7 +8,6 @@ const puppet = new PuppetPadlocal({
 
 const bot = WechatyBuilder.build({
   name: "PadLocalDemo",
-  puppet,
 })
   .on("scan", (qrcode, status) => {
     if (status === ScanStatus.Waiting && qrcode) {
