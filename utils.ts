@@ -27,3 +27,7 @@ export const getWeeklyStats = async (week: String) => {
 export const getAllStats = async () => {
     return await webClient.get("/alltime.json");
 };
+
+export const getDailyCodingChallenge = async () => {
+    return await axios.get("https://leetcode.com/graphql?query=%20{%20activeDailyCodingChallengeQuestion%20{%20date%20link%20}%20}");
+};

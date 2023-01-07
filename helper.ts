@@ -1,6 +1,6 @@
 import {log, Message} from "wechaty";
 import * as PUPPET from "wechaty-puppet";
-import { getDailyStats, getWeeklyStats, getAllStats } from "./utils";
+import { getDailyStats, getWeeklyStats, getAllStats, getDailyCodingChallenge } from "./utils";
 
 export const LOGPRE = "[PadLocalDemo]"
 
@@ -138,6 +138,11 @@ export async function BotResponse(message: Message) {
   if(isCheckDaily) await sendDateStat(message, date);
   if(isCheckWeekly) await sendWeekStat(message, week);
   if(isCheckUser) await sendUserStat(message, user);
+  if(!isCheckDaily && !isCheckWeekly && !isCheckUser)
+    await getDailyCodingChallenge().then((res) => {
+      let link = JSON.stringify(res.data).split("link")[1].split('"')[2];
+      message.say("Bot不知道你在说什么，但是今天的每日一题是: https://leetcode.com" + link + " 快去做！！(求求你");
+    });
 }
 
 export async function sendDateStat(message: Message, date: String){
@@ -155,18 +160,19 @@ export async function sendDateStat(message: Message, date: String){
     if (noOne) return;
     userMap = new Map([...userMap.entries()].sort((a, b) => b[1] - a[1]));
     let cnt = 0;
-    let msg = date + "目前做题最多的前三人是：";
+    let msg = "在" + date + "目前所统计到做题最多的前三人是：";
     userMap.forEach((value, key) => {
       if (cnt < 3){
         msg += "\n" + key + "：" + value;
         cnt++;
       }
     });
-    msg += "\n 快来做题wwww! (๑•̀ㅂ•́)و✧\n (排名仅供参考, 相同时按加入顺序排捏~)"
+    msg += "\n快来做题wwww! (๑•̀ㅂ•́)و✧\n(排名仅供参考, 相同时按加入顺序排捏~)"
     log.info(msg);
     message.say(msg);
   }).catch((err) => {
-    message.say("获取数据失败捏，请检查你的输入是否正确！！！然后重试捏~");
+    console.log(err);
+    message.say("获取数据失败捏，请检查你想check的date是否exists！！！然后重试捏~");
   });
 };
 
@@ -185,24 +191,33 @@ export async function sendWeekStat(message: Message, week: String){
     if (noOne) return;
     userMap = new Map([...userMap.entries()].sort((a, b) => b[1] - a[1]));
     let cnt = 0;
-    let msg = week + "目前做题最多的前三人是：";
+    let msg = "week:" + week + "目前统计到做题最多的前三人是：";
     userMap.forEach((value, key) => {
       if (cnt < 3){
         msg += "\n" + key + "：" + value;
         cnt++;
       }
     });
-    msg += "\n 快来做题wwww! (๑•̀ㅂ•́)و✧\n (排名仅供参考, 相同时按加入顺序排捏~)"
+    msg += "\n快来做题wwww! (๑•̀ㅂ•́)و✧\n(排名仅供参考, 相同时按加入顺序排捏~)"
     log.info(msg);
     message.say(msg);
   }).catch((err) => {
-    message.say("获取数据失败捏，请检查你的输入是否正确！！！然后重试捏~");
+    console.log(err);
+    message.say("获取数据失败捏，你确定你想query的week存在吗！！！不要耍我啊kora！~");
   });
 };
 
 export async function sendUserStat(message: Message, user: String){
   await getAllStats().then((res) => {
     let dataMap = new Map(Object.entries(res.data));
+    if (dataMap.size === 0) {
+      message.say("数据空空，是不是读错了orz~");
+      return;
+    }
+    if (dataMap.get(user.toString()) === undefined){
+        message.say("欸~？没有找到这个用户的数据诶！是不是输错了呢？");
+        return;
+    }
     let noOne = true;
     dataMap.forEach((value, key) => {
       if (key !== user) return;
@@ -212,15 +227,17 @@ export async function sendUserStat(message: Message, user: String){
       let total = userDataMap.get("total");
       msg += "\n总共做了" + total + "道题捏";
       let easy_cnt = userDataMap.get("easy_cnt");
-      msg += "\n其中简单题做了" + easy_cnt + "道捏";
+      msg += "\n其中简单题做了" + easy_cnt + "道";
       let medium_cnt = userDataMap.get("medium_cnt");
-      msg += "\n中等题做了" + medium_cnt + "道捏";
+      msg += "\n中等题做了" + medium_cnt + "道";
       let hard_cnt = userDataMap.get("hard_cnt");
-      msg += "\n困难题做了" + hard_cnt + "道捏";
+      msg += "\n困难题做了" + hard_cnt + "道";
+      msg += "\n再接再厉呀！！！";
       if (total > 0) message.say(msg);
       else message.say("这个人还没有做题捏~");
     });
   }).catch((err) => {
+    console.log(err);
     message.say("获取数据失败捏，请检查你的输入是否正确！！！然后重试捏~");
   });
 };
