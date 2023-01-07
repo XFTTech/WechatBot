@@ -1,6 +1,6 @@
 import {log, Message} from "wechaty";
 import * as PUPPET from "wechaty-puppet";
-import { getDailyStats } from "./utils";
+import { getDailyStats, getWeeklyStats, getAllStats } from "./utils";
 
 export const LOGPRE = "[PadLocalDemo]"
 
@@ -46,21 +46,21 @@ export async function getMessagePayload(message: Message) {
 
     case PUPPET.types.Message.Image: {
       const messageImage = await message.toImage();
+      log.info(LOGPRE, `get message image: ${JSON.stringify(messageImage)}`);
+      // const thumbImage = await messageImage.thumbnail();
+      // const thumbImageData = await thumbImage.toBuffer();
 
-      const thumbImage = await messageImage.thumbnail();
-      const thumbImageData = await thumbImage.toBuffer();
+      // log.info(LOGPRE, `get message image, thumb: ${thumbImageData.length}`);
 
-      log.info(LOGPRE, `get message image, thumb: ${thumbImageData.length}`);
+      // const hdImage = await messageImage.hd();
+      // const hdImageData = await hdImage.toBuffer();
 
-      const hdImage = await messageImage.hd();
-      const hdImageData = await hdImage.toBuffer();
+      // log.info(LOGPRE, `get message image, hd: ${hdImageData.length}`);
 
-      log.info(LOGPRE, `get message image, hd: ${hdImageData.length}`);
+      // const artworkImage = await messageImage.artwork();
+      // const artworkImageData = await artworkImage.toBuffer();
 
-      const artworkImage = await messageImage.artwork();
-      const artworkImageData = await artworkImage.toBuffer();
-
-      log.info(LOGPRE, `get message image, artwork: ${artworkImageData.length}`);
+      // log.info(LOGPRE, `get message image, artwork: ${artworkImageData.length}`);
 
       break;
     }
@@ -88,36 +88,44 @@ export async function getMessagePayload(message: Message) {
 }
 
 export async function BotResponse(message: Message) {
-  // if (message.to()?.self() && message.text().indexOf("ding") !== -1) {
-  //   await message.talker().say(message.text().replace("ding", "dong"));
-  // }
-  if (message.self()) return;
   // const messageTo = message.to();
   const messageRoom = message.room();
-  if (!messageRoom) return;
+  if (!messageRoom) {
+    log.info(LOGPRE, "not in room, ignore"); 
+    return;
+  }
   const messageText = message.text();
-  if (messageText.indexOf("@Bot") !== 0) return;
-  const messageFrom = message.talker();
-  let isCheckDaily = false, isCheckWeekly = false, isCheckUser = false;
+  if (!messageText.includes("@Bot")) {
+    log.info(LOGPRE, "not for bot, ignore");
+    return;
+  }
+
   let topic = await messageRoom.topic();
-  let commandList = messageText.split("@Bot")[1].split(";");
+  const messageFrom = message.talker();
+
+  let isCheckDaily = false, isCheckWeekly = false, isCheckUser = false;
   let date : String = "", week : String = "", user : String = "";
+  let commandList = messageText.split("@Bot")[1].split(";");
   commandList.forEach((command) => {
-    if (command.indexOf("check daily ") !== 0){
+
+    if (command.includes("check daily ")){
       let temp = command.split("check daily ");
       if (temp.length <= 1) return;
       isCheckDaily = true;
       date = temp[1].substring(0, 10);
       log.info("在检测daily了捏");
     }
-    if (command.indexOf("check weeekly ") !== 0){
-      let temp = command.split("check weeekly ");
+
+    if (command.includes("check weekly ")){
+      let temp = command.split("check weekly ");
+      temp.map((item) => log.info("item: " + item));
       if (temp.length <= 1) return;
       isCheckWeekly = true;
       week = temp[1].substring(0, 7);
       log.info("在检测weekly了捏");
     }
-    if (command.indexOf("check user ") !== 0){
+
+    if (command.includes("check user ")){
       let temp = command.split("check user ");
       if (temp.length <= 1) return;
       isCheckUser = true;
@@ -126,9 +134,10 @@ export async function BotResponse(message: Message) {
     }
     
   });
+  
   if(isCheckDaily) await sendDateStat(message, date);
-  if(isCheckWeekly) await sendDateStat(message, date);
-  if(isCheckUser) await sendDateStat(message, date);
+  if(isCheckWeekly) await sendWeekStat(message, week);
+  if(isCheckUser) await sendUserStat(message, user);
 }
 
 export async function sendDateStat(message: Message, date: String){
@@ -154,7 +163,63 @@ export async function sendDateStat(message: Message, date: String){
       }
     });
     msg += "\n 快来做题wwww! (๑•̀ㅂ•́)و✧\n (排名仅供参考, 相同时按加入顺序排捏~)"
+    log.info(msg);
     message.say(msg);
+  }).catch((err) => {
+    message.say("获取数据失败捏，请检查你的输入是否正确！！！然后重试捏~");
+  });
+};
+
+export async function sendWeekStat(message: Message, week: String){
+  await getWeeklyStats(week).then((res) => {
+    let dataMap = new Map(Object.entries(res.data));
+    let userMap = new Map();
+    let noOne = true;
+    dataMap.forEach((value, key) => {
+      let userDataMap = new Map(Object.entries(value ? value : {}));
+      let temp = userDataMap.get("total");
+      userMap.set(key, temp);
+      if (temp > 0) noOne = false;
+      log.info(key + "做了"+ temp + "道题捏");
+    });
+    if (noOne) return;
+    userMap = new Map([...userMap.entries()].sort((a, b) => b[1] - a[1]));
+    let cnt = 0;
+    let msg = week + "目前做题最多的前三人是：";
+    userMap.forEach((value, key) => {
+      if (cnt < 3){
+        msg += "\n" + key + "：" + value;
+        cnt++;
+      }
+    });
+    msg += "\n 快来做题wwww! (๑•̀ㅂ•́)و✧\n (排名仅供参考, 相同时按加入顺序排捏~)"
+    log.info(msg);
+    message.say(msg);
+  }).catch((err) => {
+    message.say("获取数据失败捏，请检查你的输入是否正确！！！然后重试捏~");
+  });
+};
+
+export async function sendUserStat(message: Message, user: String){
+  await getAllStats().then((res) => {
+    let dataMap = new Map(Object.entries(res.data));
+    let noOne = true;
+    dataMap.forEach((value, key) => {
+      if (key !== user) return;
+      noOne = false;
+      let userDataMap = new Map(Object.entries(value ? value : {}));
+      let msg = user + "的做题情况是：";
+      let total = userDataMap.get("total");
+      msg += "\n总共做了" + total + "道题捏";
+      let easy_cnt = userDataMap.get("easy_cnt");
+      msg += "\n其中简单题做了" + easy_cnt + "道捏";
+      let medium_cnt = userDataMap.get("medium_cnt");
+      msg += "\n中等题做了" + medium_cnt + "道捏";
+      let hard_cnt = userDataMap.get("hard_cnt");
+      msg += "\n困难题做了" + hard_cnt + "道捏";
+      if (total > 0) message.say(msg);
+      else message.say("这个人还没有做题捏~");
+    });
   }).catch((err) => {
     message.say("获取数据失败捏，请检查你的输入是否正确！！！然后重试捏~");
   });
