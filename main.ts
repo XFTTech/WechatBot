@@ -1,14 +1,9 @@
 import {log, ScanStatus, WechatyBuilder} from "wechaty";
 import {PuppetPadlocal} from "wechaty-puppet-padlocal";
-import {dingDongBot, getMessagePayload, LOGPRE} from "./helper";
-
-/****************************************
- * 去掉注释，可以完全打开调试日志
- ****************************************/
-// log.level("silly");
+import {BotResponse, getMessagePayload, LOGPRE} from "./helper";
 
 const puppet = new PuppetPadlocal({
-    token: ">>>> YOUR_PADLOCAL_TOKEN <<<<"
+    token: "TOKEN"
 })
 
 const bot = WechatyBuilder.build({
@@ -50,7 +45,7 @@ const bot = WechatyBuilder.build({
 
     await getMessagePayload(message);
 
-    await dingDongBot(message);
+    await BotResponse(message);
   })
 
   .on("room-invite", async (roomInvitation) => {
