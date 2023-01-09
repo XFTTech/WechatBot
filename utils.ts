@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const webClient = axios.create({
-    baseURL: 'https://xfttech.github.io/UTLeetcoder/data',
+    baseURL: 'https://coder.xfttech.org/data',
     timeout: 10000
 });
 
