@@ -95,7 +95,7 @@ export async function BotResponse(message: Message) {
     return;
   }
   const messageText = message.text();
-  if (!messageText.includes("@Bot")) {
+  if (messageText.indexOf("@Bot") !== 0) {
     log.info(LOGPRE, "not for bot, ignore");
     return;
   }
@@ -171,7 +171,7 @@ export async function sendDateStat(message: Message, date: String){
     log.info(msg);
     message.say(msg);
   }).catch((err) => {
-    console.log(err);
+    console.log(message);
     message.say("获取数据失败捏，请检查你想check的date是否exists！！！然后重试捏~");
   });
 };
@@ -202,7 +202,7 @@ export async function sendWeekStat(message: Message, week: String){
     log.info(msg);
     message.say(msg);
   }).catch((err) => {
-    console.log(err);
+    console.log(message);
     message.say("获取数据失败捏，你确定你想query的week存在吗！！！不要耍我啊kora！~");
   });
 };
@@ -234,10 +234,10 @@ export async function sendUserStat(message: Message, user: String){
       msg += "\n困难题做了" + hard_cnt + "道";
       msg += "\n再接再厉呀！！！";
       if (total > 0) message.say(msg);
-      else message.say("这个人还没有做题捏~");
+      else message.say("这个人加入到现在还没有做题捏~");
     });
   }).catch((err) => {
-    console.log(err);
+    console.log(message);
     message.say("获取数据失败捏，请检查你的输入是否正确！！！然后重试捏~");
   });
 };

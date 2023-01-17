@@ -43,7 +43,7 @@ const bot = WechatyBuilder.build({
   .on("message", async (message) => {
     log.info(LOGPRE, `on message: ${message.toString()}`);
 
-    await getMessagePayload(message);
+    // await getMessagePayload(message);
 
     await BotResponse(message);
   })
