@@ -1,6 +1,6 @@
 import {log, ScanStatus, WechatyBuilder} from "wechaty";
 import {PuppetPadlocal} from "wechaty-puppet-padlocal";
-import {BotResponse, getMessagePayload, LOGPRE} from "./helper";
+import {BotResponse, getMessagePayload, LOGPRE} from "./utils/helper";
 
 const puppet = new PuppetPadlocal({
     token: "TOKEN"

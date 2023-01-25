@@ -28,6 +28,14 @@ export const getAllStats = async () => {
     return await webClient.get("/alltime.json");
 };
 
+export const getUsers = async () => {
+    return await webClient.get("/leetcoder_ids.json");
+};
+
+export const getLeetcodeUser = async (username: String) => {
+    return await webClient.get("/user_info/" + username + ".json");
+};
+
 export const getDailyCodingChallenge = async () => {
     return await axios.get("https://leetcode.com/graphql?query=%20{%20activeDailyCodingChallengeQuestion%20{%20date%20link%20}%20}");
 };
