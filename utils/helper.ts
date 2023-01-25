@@ -113,7 +113,7 @@ export async function BotResponse(message: Message) {
     if (commandMap.has(command)) {
       let remain = item.split(words[0] + " " + words[1]);
       isSaying = true;
-      await commandMap.get(command)?.(message, remain.length > 0? remain[1]: "");
+      await commandMap.get(command)?.(message, remain.length > 0? remain[1].trim(): "");
     }
   };
   if (!isSaying){
