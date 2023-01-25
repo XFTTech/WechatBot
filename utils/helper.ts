@@ -92,15 +92,6 @@ export async function getMessagePayload(message: Message) {
 
 export async function BotResponse(message: Message) {
     // const messageTo = message.to();
-    await getUsers().then((user) => {
-        user.data.forEach((item: string) => {
-            getLeetcodeUser(item).then((res) => {
-                let dataMap = new Map(Object.entries(res.data));
-                let temp = dataMap.get("wxid");
-                if (temp !== "") wechat_ids.add(temp);
-            });
-        });
-    });
     const messageRoom = message.room();
     if (!messageRoom) {
         log.info(LOGPRE, "not in room, ignore");
@@ -111,13 +102,25 @@ export async function BotResponse(message: Message) {
         log.info(LOGPRE, "not for bot, ignore");
         return;
     }
+
+    await getUsers().then((user) => {
+        user.data.forEach((item: string) => {
+            getLeetcodeUser(item).then((res) => {
+                let dataMap = new Map(Object.entries(res.data));
+                wechat_ids.add(dataMap.get("wxid"));
+            });
+        });
+    });
+
+    console.log(wechat_ids);
+
+
     let topic = await messageRoom.topic();
     const messageFrom = message.talker();
-
-    let isUser = wechat_ids.has(messageFrom.payload?.weixin);
+    // console.log(messageFrom);
+    let isUser = true ? wechat_ids.has(messageFrom.weixin) : false;
     let isSaying = false;
     let commandList = messageText.split("@Bot")[1].split(";");
-    
     for (let item of commandList) {
         let words = item.trim().split(" ");
         if (words.length < 2) continue;
@@ -125,8 +128,8 @@ export async function BotResponse(message: Message) {
         if (commandMap.has(command)) {
             isSaying = true;
             if (!isUser && command === "openai prompt") {
-                // console.log(messageFrom);
-                console.log(messageFrom.payload?.weixin);
+                console.log(messageFrom);
+                console.log(messageFrom.payload?.handle);
                 message.say("你不是用户，不能使用这个命令");
                 continue;
             }
