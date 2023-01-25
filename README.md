@@ -15,10 +15,11 @@ All bot commands are written in `helper.ts`. You can add your own commands in th
 
 This bot can be called by `@bot` in wechat at index 0.
 
-1. get date statistics from UTLeetcoder provide json by provide message contain `@bot` and `check daily xxxx-xx-xx` where `xxxx-xx-xx` is the date format you want to check. The bot will return the statistics of that day (but only top 3, cz may lots of data).
-2. get weekly statistics from UTLeetcoder provide json by provide message contain `@bot` and `check weeekly xxxx-xx` where `xxxx` stand for the year and `xx` stand for the week number. The bot will return the statistics of that week.
-3. get specific user statistics from UTLeetcoder provide json by provide message contain `@bot` and `check user xxxx` where `xxxx` is the user name (notice, we dont exactly know your query name so that we query all string followed `user ` plz type correct name). The bot will return the statistics of that user.
-4. if you want request multiple statistics, you can provide message contain `@bot` and above commands split by `;`. The bot will return the statistics of all commands.
+1. get date statistics from UTLeetcoder provide json by provide message with head `@bot` and `check daily xxxx-xx-xx` where `xxxx-xx-xx` is the date format you want to check. The bot will return the statistics of that day (but only top 3, cz may lots of data).
+2. get weekly statistics from UTLeetcoder provide json by provide message with head `@bot` and `check weeekly xxxx-xx` where `xxxx` stand for the year and `xx` stand for the week number. The bot will return the statistics of that week.
+3. get specific user statistics from UTLeetcoder provide json by provide message with head `@bot` and `check user xxxx` where `xxxx` is the user name (notice, we dont exactly know your query name so that we query all string followed `user ` plz type correct name). The bot will return the statistics of that user.
+4. use davinci text model by provide message with head `@bot` and `openai prompt xxxx` where `xxxx` is the sentence you wanna ask or complete.
+5. if you want request multiple statistics, you can provide message contain `@bot` and above commands split by `;`. The bot will return the statistics of all commands.
 
 ## Contributing
 
