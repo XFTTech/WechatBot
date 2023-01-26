@@ -126,5 +126,8 @@ export async function sendOpenAIPrompt(message: Message, prompt: string) {
         let msg = res.data.choices[0].text?.trim();
         msg = msg? msg : "error happened";
         message.say(msg);
+    }).catch((err) => {
+        console.log(err);
+        message.say("好像出错了欸~不知道是openai的问题还是我的问题捏~总之先喊人来修吧！");
     });
 }
