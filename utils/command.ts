@@ -1,6 +1,7 @@
 import { log, Message } from "wechaty";
 import { getDailyStats, getWeeklyStats, getAllStats, getDailyCodingChallenge } from "./utils";
 import { getCompletion } from "./openai";
+import { addUser } from "./addUser";
 
 export const commandMap = new Map(Object.entries(
     {
@@ -9,6 +10,7 @@ export const commandMap = new Map(Object.entries(
         "check user": sendUserStat,
         "daily question": sendTodayQuestion,
         "openai prompt": sendOpenAIPrompt,
+        "add user": sendAddUser,
     }
 ));
 
@@ -130,4 +132,13 @@ export async function sendOpenAIPrompt(message: Message, prompt: string) {
         console.log(err);
         message.say("好像出错了欸~不知道是openai的问题还是我的问题捏~总之先喊人来修吧！");
     });
+}
+
+export async function sendAddUser(message: Message, userInfo: string) {
+    try{
+        let tempUser = addUser(userInfo);
+        message.say("添加成功！欢迎" + tempUser + "加入我们捏~");
+    }catch (err) {
+        message.say("添加失败！你确定你的输入是正确的吗！！你是不是之前找别的人加过了！(猫猫疑惑脸");
+    }
 }
