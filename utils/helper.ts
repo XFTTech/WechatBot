@@ -103,7 +103,7 @@ export async function BotResponse(message: Message) {
 
   let topic = await messageRoom.topic();
   const messageFrom = message.talker();
-  console.log("messageFrom:", messageFrom);
+  // console.log("messageFrom:", messageFrom);
 
   let isSaying  = false;
   let commandList = messageText.split("@Bot")[1].split(";");
